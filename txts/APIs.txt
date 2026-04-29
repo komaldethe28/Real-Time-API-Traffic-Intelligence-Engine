@@ -1,5 +1,0 @@
-http://localhost:3000/api/v1/analytics/overview
-http://localhost:3000/demo/ping
-http://localhost:3000/api/v1/health
-
-Convert the remaining shadcn UI components and helpers (src/components/ui/*.tsx, src/lib/utils.ts, src/hooks/use-toast.ts, src/hooks/use-mobile.tsx) to JavaScript too.
