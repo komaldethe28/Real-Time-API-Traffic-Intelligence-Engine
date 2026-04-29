@@ -1,0 +1,92 @@
+
+
+## Summary of Changes Made
+
+### 1. Removed `lovable-tagger` Dependency
+
+**File:** vite.config.js
+
+**Problem:** After uninstalling `lovable-tagger` via npm, the package was still being imported in the Vite config, causing the dev server to fail.
+
+**Solution:** Removed the import and plugin usage:
+
+```javascript
+// REMOVED:
+// import { componentTagger } from "lovable-tagger";
+// ...
+// plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
+
+// REPLACED WITH:
+// plugins: [react()],
+```
+
+---
+
+### 2. Created UI Environment Configuration
+
+**File:** .env (created)
+
+**Purpose:** Connect UI to the API Server with proper WebSocket authentication.
+
+```bash
+VITE_API_BASE_URL=http://localhost:3000
+VITE_WS_URL=ws://localhost:3000/ws
+VITE_WS_TOKEN=e1ed505e350955aa53bd70eed6e93d4cd15f59ec07fff9ceb18a5005888b43d0
+```
+
+---
+
+### 3. Added CORS Middleware to API Server
+
+**File:** app.js
+
+**Problem:** Browser blocked requests from UI (port 8080/8081) to API (port 3000) due to missing CORS headers.
+
+**Solution:** Added CORS middleware before other middleware:
+
+```javascript
+// CORS: allow UI origin(s)
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  const allowed = ['http://localhost:8080', 'http://localhost:8081'];
+  if (allowed.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
+```
+
+---
+
+### Summary Table
+
+| Change | File | Type |
+|--------|------|------|
+| Remove `lovable-tagger` import | vite.config.js | Bug fix |
+| Create .env with API/WS config | .env | New file |
+| Add CORS middleware | `API Server/src/app.js` | Feature |
+
+---
+
+### Architecture After Changes
+
+```
+┌─────────────────┐         ┌─────────────────┐
+│   UI (Vite)     			 │────────▶│  API (Express)  │
+│  localhost:8081 │  CORS   │                          localhost:3000│
+└───────────────┘         └────────┬────────┘
+                                     │
+                                     ▼
+                              ┌─────────────┐
+                              │    Redis    │
+                              │  localhost  │
+                              └─────────────┘
+```
+
+The UI now successfully connects to the API Server, fetches analytics data, and can authenticate via WebSocket for real-time updates.
