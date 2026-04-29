@@ -1,0 +1,17 @@
+"Act as a senior software engineer and a master technical communicator. I want to explain this project for a job interview/resume in a way that is highly engaging, technically profound, and relatable to a non-technical person. Please generate an explanation script following these requirements:
+
+The Hook: Start with a real-world problem or analogy that everyone understands (like the postman analogy in the video at 3:58).
+Technical Depth: Explain the core architecture. Focus on concepts like concurrency, multithreading, system design, and algorithms. Explain why these were chosen over simpler alternatives.
+The 'What, How, Why': Structure the explanation clearly:
+What does the project do?
+How does it handle data/logic under the hood?
+Why is this impactful (real-world application)?
+Resume Impact: Give me 3 bullet points I can put on my resume that highlight the results of the project (e.g., 'Improved processing efficiency by X% using multithreading').
+Interview Ready: Prepare me for a 'Deep Dive' question: What is the most difficult bug or architectural challenge I faced, and how did I solve it?
+Tone: Professional, enthusiastic, and confident. Keep the technical jargon but define it with simple, high-level logic."
+
+Tips for the "Pratyush-style" Explanation:
+Use Analogies: As highlighted in the video (2:12), networking projects are best explained through everyday systems (like postal services). Always relate your code back to a real-world process.
+Focus on 'The Why': Don't just say what your code does; explain the reason for the architecture. If you used multithreading, emphasize that it's for performance and scalability (14:11).
+Embrace the AI Usage: Be honest about using AI to build your project, but show that you understand the underlying concepts (15:01). This proves you are an engineer who can leverage tools effectively to solve complex problems.
+Simplicity is Key: If you can't explain your project in a simple language to a peer, you haven't mastered it yet. Practice the "Elevator Pitch" version of your project based on the prompt above!
