@@ -317,6 +317,27 @@ export async function blockIp(ip, ttlSec, reason) {
 
 ---
 
+### How API blocking works
+
+The backend uses a fast Redis-backed blocklist to deny requests immediately when an IP is flagged.
+
+- `blocklistMiddleware` runs first for every request.
+- It checks `blocked:ips:set` for O(1) membership using `SISMEMBER`.
+- If the IP is present, it confirms the TTL-backed `block:ip:{ip}` string still exists.
+- If the block is valid, the request is aborted with `403 { error: 'blocked', ip }`.
+- If the `block:ip:{ip}` key expired, the stale set entry is cleaned up automatically.
+
+Blocking is triggered by anomaly detection in `anomalyService.js`:
+
+- `SPIKE_TRAFFIC` and `SCAN_PATTERN` cause a hard block.
+- `ENDPOINT_HAMMER` causes a soft throttle instead.
+- Hard blocks use `blockIp(ip, ttlSec, reason)` and add the IP to `blocked:ips:set`.
+- Repeat offenders can become permanent bans when reputation exceeds the configured threshold.
+
+This design keeps block enforcement fast and reliable while still allowing automatic removal when the TTL expires.
+
+---
+
 ### 4. Real-Time WebSocket with Exponential Backoff
 
 **Why exponential backoff?** Network partitions and Redis Pub/Sub disconnects are transient. Immediate reconnect storms amplify the problem.
