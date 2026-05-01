@@ -133,6 +133,31 @@ flowchart TD
 - `GET /api/v1/analytics/ip/:ip` — per-IP history and flags
 - `POST /api/v1/admin/unblock` — unblock IP with admin API key
 
+#### Step-by-Step Flow: How Express.js Executes the Pipeline
+
+When an API request arrives at our server, Express.js guides it through the middleware functions in the exact order they were set up.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant API Request
+    participant Express.js App
+    participant Blocklist MW
+    participant Traffic Capture MW
+    participant Core Logic
+
+    User->>API Request: Sends API call (e.g., GET /data)
+    API Request->>Express.js App: Request arrives
+    Express.js App->>Blocklist MW: Pass request to first checkpoint
+    Blocklist MW->>Express.js App: Call next() if not blocked
+    Express.js App->>Traffic Capture MW: Pass request to second checkpoint
+    Traffic Capture MW->>Express.js App: Call next() after background tasks start
+    Express.js App->>Core Logic: Pass request to actual API handler if all pass
+    Core Logic->>API Request: Sends back response (e.g., 200 OK)
+    API Request->>User: User receives response
+```
+**Explanation:** This diagram shows a successful request. The `Express.js App` is the central coordinator. It passes the request to the `Blocklist MW` (Middleware). If the `Blocklist MW` doesn't block the request, it calls `next()`, telling Express.js to move to the `Traffic Capture MW`. This continues until the request reaches the `Core Logic` (the actual code that handles `/data`). If any middleware decides to block or rate-limit the request, it sends a response directly and the pipeline stops there.
+
 ## Startup and Config
 - `src/server.js` initializes the Express app, Redis, Lua script, WebSocket hub, and baseline updater
 - `src/config/index.js` loads env vars and defines defaults
