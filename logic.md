@@ -7,6 +7,38 @@ This project is a real-time API traffic intelligence engine built with:
 - WebSocket for live event broadcasting
 - Clean architecture with controllers, services, middleware, routes, websocket, redis, and config
 
+## Visual Overview
+
+```mermaid
+flowchart TD
+    A0["API Request Processing Pipeline
+"]
+    A1["Redis Data Layer
+"]
+    A2["Anomaly Detection Engine
+"]
+    A3["Real-Time Eventing System
+"]
+    A4["Frontend Data Access
+"]
+    A5["User Interface Structure
+"]
+    A6["Application Configuration
+"]
+    A0 -- "Performs data operations" --> A1
+    A0 -- "Triggers evaluation" --> A2
+    A0 -- "Applies settings" --> A6
+    A2 -- "Stores anomaly data" --> A1
+    A2 -- "Publishes events" --> A3
+    A2 -- "Uses thresholds" --> A6
+    A3 -- "Uses Pub/Sub" --> A1
+    A3 -- "Streams updates" --> A5
+    A3 -- "Uses settings" --> A6
+    A5 -- "Fetches data" --> A4
+    A4 -- "Uses API base URL" --> A6
+```
+
+
 ## Request Flow
 1. `blocklistMiddleware`
    - early reject if IP is already hard blocked
